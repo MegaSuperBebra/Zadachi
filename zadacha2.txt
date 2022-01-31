@@ -1,0 +1,90 @@
+
+Вторая задача, минимальное расстояние между точками
+
+
+#include <iostream>
+#include <queue>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+void show_vector(vector<int>&a_vec)
+{
+    for (int & it : a_vec)
+    {
+        cout << it + 1 << " ";
+    }
+}
+
+int main()
+{
+    int n, m;
+    cin >> n; cin >> m;
+    int matrix1[m][2], matrix[n][n];
+
+    for (int i = 0; i < m; i++) // ввод пар
+    {
+        for (int j = 0; j < 2; j++)
+            cin >> matrix1[i][j];
+    }
+
+    vector<int> parents(n, -1);
+    vector<int> used(n, 0);
+    vector<int> d(n);
+
+    int start, aim;
+    cin >> start >> aim;
+    --start; --aim;
+
+    for (int i = 0; i < n; i++) // перевод пар в список смежности
+    {
+        for (int j = 0; j < n; j++)
+            matrix[i][j] = 0;
+    }
+
+
+
+    for (int i = 0; i < m; i++) 
+    {
+        for (int j = 0; j < 2; j++)
+        {
+            matrix[matrix1[i][0] - 1][matrix1[i][1] - 1] = 1;
+            matrix[matrix1[i][1] - 1][matrix1[i][0] - 1] = 1;
+        }
+    }
+
+    queue<int> qeue;
+    qeue.push(start);
+
+    d[start] = 0; used[start] = 1;
+
+    while (!qeue.empty()) // поиск в ширину
+    {
+        int val = qeue.front(); qeue.pop();
+
+        for (int i = 0; i < n; ++i)
+        {
+            if (matrix[val][i] && !used[i])
+            {
+                d[i] = d[val] + 1;
+                parents[i] = val;
+                qeue.push(i);
+                used[i] = true;
+            }
+        }
+
+    }
+
+    cout << d[aim] << endl;
+    vector <int> way;
+    for (int i = aim; i != -1; i = parents[i]) // создание пути
+    {
+        way.push_back(i);
+    }
+    reverse (way.begin(), way.end());
+    for (int i : way)
+    {
+        cout << i + 1 << " ";
+    }
+}
